@@ -1,5 +1,4 @@
 type fleur = {mesures : float array; etiquette : int}
-let ( @. ) = Fun.compose
 
 let lire_iris (nom_fichier:string) =
   let fichier = open_in nom_fichier in
@@ -24,41 +23,69 @@ let lire_iris (nom_fichier:string) =
   let _ = In_channel.input_line fichier in  
   lecture_ligne_a_ligne []
 
-
-let print_fleur_list =
+(* Affiche une liste de fleurs *)
+let print_fleur_list: fleur list -> unit =
   List.iter (fun fleur -> 
-    Printf.printf "mesures = [| %f ; %f ; %f ; %f |] etiquette = %d\n" 
+    Printf.printf "mesures = [| %.3f ; %.3f ; %.3f ; %.3f |] etiquette = %d\n" 
     fleur.mesures.(0) fleur.mesures.(1) fleur.mesures.(2) fleur.mesures.(3) fleur.etiquette
   )
 
+(* Affiche une matrice *)
+let print_matrice (mat: int array array): unit =
+  Array.iter (fun ligne ->
+    Array.iter (fun x -> Printf.printf "%d " x) ligne;
+    print_newline ()
+  ) mat
+
+(* Affiche une liste de flottants *)
+let print_float_list: float list -> unit =
+  List.iter (fun x -> Printf.printf "%.3f\n" x)
+
+(* Renvoie une liste contenant les k premiers éléments de l *)
+(* take 3 [5; 2; 3; 6; 4] = [5; 2; 3] *)
 let rec take k l =
   if k <= 0 then []
   else match l with 
   | [] -> []
   | h :: t -> h :: (take (k - 1) t)
 
-type fonction_de_classification = float array -> int
+(* Une fonction générale de distance entre deux points *)
+(* fd: La fonction à appliquer à la somme *)
+(* ff: La fonction à appliquer à deux coordonnée *)
+(* a1 et a2: Les deux points à comparer *)
+let distance fd ff a1 a2 =
+  fd @@ Array.fold_left (fun acc (x, x') -> acc +. ff x x') 0. (Array.combine a1 a2)
 
-let k_plus_proches_voisins (k: int) (fleurs: fleur list) (f: float array) : int =
-  let distance (f1: float array) (f2: float array) =
-    Array.fold_left (fun acc (x, x') -> acc +. abs_float (x -. x')) 0. (Array.combine f1 f2)
+let distance_man = distance Fun.id (fun x x' -> abs_float (x -. x'))
+let distance_euc = distance sqrt (fun x x' -> (x -. x') *. (x -. x'))
+
+(* Renvoie l'index du plus grand élément de a *)
+let max_index a =
+  let l = Array.length a in 
+  let rec aux acc i =
+    if i = l then acc 
+    else
+      aux (if a.(i) > a.(acc) then i else acc) (i + 1)
   in
-  let distances = List.sort (fun (a,_) (b,_) -> int_of_float (a -. b)) @@ List.map (fun fl -> (distance fl.mesures f, fl.etiquette)) fleurs in
+  aux 0 1
+
+(* Renvoie la classe supposée en utilisant l'algo des k-plus proches voisins *)
+(* dist: la fcontion de distance utilisée *)
+(* k: Le nombre de voisins à utiliser *)
+(* fleurs: Le jeu d'entraînement *)
+(* f: Les mesures de la fleur à tester *)
+let k_plus_proches_voisins (dist: float array -> float array -> float) (k: int) (fleurs: fleur list) (f: float array) : int =
+  let distances = List.sort (fun (a,_) (b,_) -> int_of_float (a -. b)) @@ List.map (fun fl -> (dist fl.mesures f, fl.etiquette)) fleurs in
   let k_plus_proches = take k distances in
-  let (f1, f2, f3) = List.fold_left (fun (f1, f2, f3) (_, e) ->
-    match e with
-      | 1 -> (f1 + 1, f2, f3)
-      | 2 -> (f1, f2 + 1, f3)
-      | 3 -> (f1, f2, f3 + 1)
-      | _ -> (f1, f2, f3)
-    ) (0, 0, 0) k_plus_proches
+  let a = List.fold_left (fun a (_, e) ->
+      a.(e - 1) <- a.(e - 1) + 1;
+      a
+    ) (Array.make 3 0) k_plus_proches
   in
-  if f1 = f2 && f2 = f3 then snd @@ List.hd k_plus_proches
-  else if f1 >= f2 && f1 >= f3 then 1
-  else if f2 >= f1 && f2 >= f3 then 2
-  else 3
+  max_index a + 1
 
-let matrice_confusion (fleurs: fleur list) (f: fonction_de_classification): int array array =
+(* Renvoie la matrice de confusion d'un jeu de test "fleurs" en utilisant la fonction "f" pour deviner la classe *)
+let matrice_confusion (f: float array -> int) (fleurs: fleur list): int array array =
   let mat = Array.make_matrix 3 3 0 in 
   List.iter (fun {mesures; etiquette} ->
     let i = etiquette - 1 in 
@@ -67,14 +94,27 @@ let matrice_confusion (fleurs: fleur list) (f: fonction_de_classification): int 
   ) fleurs;
   mat
 
-let print_matrice_confusion mat =
-  Array.iter (fun ligne ->
-    Array.iter (fun x -> Printf.printf "%d " x) ligne;
-    print_newline ()
-  ) mat
+(* Renvoie une liste contenant les éléments dans la diagonale de m *)
+let get_diag m =
+  let n = Array.length m in 
+  let rec aux i =
+    if i = n then []
+    else m.(i).(i) :: aux (i + 1)
+  in aux 0
 
+(* Renvoie e/t avec e le nombre d'erreurs et t le nombre total d'éléments *)
+let taux_erreur_global (mat: int array array): float =
+  let tot = Array.fold_left (+) 0 (Array.map (Array.fold_left (+) 0) mat) in
+  let err = tot - (List.fold_left (+) 0 (get_diag mat)) in 
+  float_of_int err /. float_of_int tot
+
+let jeu_entr = lire_iris "iris_jeu_entr.csv" 
+let jeu_test = lire_iris "iris_jeu_test.csv"
+let taux_erreur_selon_k dist k = taux_erreur_global @@ (matrice_confusion (k_plus_proches_voisins dist k jeu_entr)) jeu_test
+let taux_euc = List.map (taux_erreur_selon_k distance_euc) (List.init 20 ((+) 1))
+let taux_man = List.map (taux_erreur_selon_k distance_man) (List.init 20 ((+) 1))
 let () =
-  let jeu_entr = lire_iris "iris_jeu_entr.csv" in
-  let jeu_test = lire_iris "iris_jeu_test.csv" in
-  let mat = matrice_confusion jeu_test (k_plus_proches_voisins 5 jeu_entr) in
-  print_matrice_confusion mat
+  print_endline "Taux d'erreur en fonction de k avec distance euclidienne";
+  print_float_list taux_euc;
+  print_endline "Taux d'erreur en fonction de k avec distance de manhattan";
+  print_float_list taux_man;
