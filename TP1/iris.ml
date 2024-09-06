@@ -53,7 +53,8 @@ let k_plus_proches_voisins (k: int) (fleurs: fleur list) (f: float array) : int 
       | _ -> (f1, f2, f3)
     ) (0, 0, 0) k_plus_proches
   in
-  if f1 >= f2 && f1 >= f3 then 1
+  if f1 = f2 && f2 = f3 then snd @@ List.hd k_plus_proches
+  else if f1 >= f2 && f1 >= f3 then 1
   else if f2 >= f1 && f2 >= f3 then 2
   else 3
 
