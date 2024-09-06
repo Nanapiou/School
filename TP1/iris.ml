@@ -69,6 +69,18 @@ let max_index a =
   in
   aux 0 1
 
+(* Contre le nombre d'occurences de e dans un tableau *)
+let count e = Array.fold_left (fun acc e' -> if e = e' then acc + 1 else acc) 0
+
+let rec minf f = function
+  | [] -> failwith "Nah fuck you"
+  | h :: t ->
+    let rec aux acc = function
+      | [] -> acc 
+      | h :: t -> aux (if f h < f acc then h else acc) t
+    in
+    aux h t
+
 (* Renvoie la classe supposée en utilisant l'algo des k-plus proches voisins *)
 (* dist: la fcontion de distance utilisée *)
 (* k: Le nombre de voisins à utiliser *)
@@ -79,7 +91,11 @@ let k_plus_proches_voisins (dist: float array -> float array -> float) (k: int) 
   let k_plus_proches = take k distances in
   let a = Array.make 3 0 in
   List.iter (fun (_, e) -> a.(e - 1) <- a.(e - 1) + 1) k_plus_proches;
-  max_index a + 1
+  let i = max_index a in
+  let n = a.(i) in
+  if count n a >= 2 then
+    snd @@ minf (fun (d, _) -> d) (List.filter (fun (d, e) -> a.(e - 1) = n) k_plus_proches)
+  else i + 1
 
 (* Renvoie la matrice de confusion d'un jeu de test "fleurs" en utilisant la fonction "f" pour deviner la classe *)
 let matrice_confusion (f: float array -> int) (fleurs: fleur list): int array array =
