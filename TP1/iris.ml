@@ -77,11 +77,10 @@ let max_index a =
 let k_plus_proches_voisins (dist: float array -> float array -> float) (k: int) (fleurs: fleur list) (f: float array) : int =
   let distances = List.sort (fun (a,_) (b,_) -> int_of_float (a -. b)) @@ List.map (fun fl -> (dist fl.mesures f, fl.etiquette)) fleurs in
   let k_plus_proches = take k distances in
-  let a = List.fold_left (fun a (_, e) ->
-      a.(e - 1) <- a.(e - 1) + 1;
-      a
-    ) (Array.make 3 0) k_plus_proches
-  in
+  let a = Array.make 3 0 in
+  List.iter (fun (_, e) ->
+    a.(e - 1) <- a.(e - 1) + 1
+  ) k_plus_proches;
   max_index a + 1
 
 (* Renvoie la matrice de confusion d'un jeu de test "fleurs" en utilisant la fonction "f" pour deviner la classe *)
