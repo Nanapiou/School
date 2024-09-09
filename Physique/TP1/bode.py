@@ -7,6 +7,7 @@ Created on Thu Sep  5 10:57:13 2024
 import numpy as np
 import matplotlib.pylab as plt
 import scipy.optimize as si
+from fonctions_utiles import monte_carlo
 
 f0 = 100
 Q = 10
