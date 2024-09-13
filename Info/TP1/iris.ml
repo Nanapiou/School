@@ -81,21 +81,19 @@ let rec minf f = function
     in
     aux h t
 
+
+let sgn x = if x < 0. then -1 else if x > 0. then 1 else 0
 (* Renvoie la classe supposée en utilisant l'algo des k-plus proches voisins *)
 (* dist: la fcontion de distance utilisée *)
 (* k: Le nombre de voisins à utiliser *)
 (* fleurs: Le jeu d'entraînement *)
 (* f: Les mesures de la fleur à tester *)
 let k_plus_proches_voisins (dist: float array -> float array -> float) (k: int) (fleurs: fleur list) (f: float array) : int =
-  let distances = List.sort (fun (a,_) (b,_) -> int_of_float (a -. b)) @@ List.map (fun fl -> (dist fl.mesures f, fl.etiquette)) fleurs in
+  let distances = List.sort (fun (a,_) (b,_) -> sgn (a -. b)) @@ List.map (fun fl -> (dist fl.mesures f, fl.etiquette)) fleurs in
   let k_plus_proches = take k distances in
   let a = Array.make 3 0 in
   List.iter (fun (_, e) -> a.(e - 1) <- a.(e - 1) + 1) k_plus_proches;
-  let i = max_index a in
-  let n = a.(i) in
-  if count n a >= 2 then
-    snd @@ minf (fun (d, _) -> d) (List.filter (fun (d, e) -> a.(e - 1) = n) k_plus_proches)
-  else i + 1
+  max_index a + 1
 
 (* Renvoie la matrice de confusion d'un jeu de test "fleurs" en utilisant la fonction "f" pour deviner la classe *)
 let matrice_confusion (f: float array -> int) (fleurs: fleur list): int array array =
@@ -131,3 +129,7 @@ let () =
   print_float_list taux_euc;
   print_endline "Taux d'erreur en fonction de k avec distance de manhattan";
   print_float_list taux_man;
+  print_newline ()
+
+let mat = matrice_confusion (k_plus_proches_voisins distance_man 2 jeu_entr) jeu_test
+let () = print_matrice mat
