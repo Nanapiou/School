@@ -73,8 +73,10 @@ float distance_man(float x1[4], float x2[4])
     return t;
 }
 
-void shift(distanced_flower *a, int l) {
-    for (int i = l - 1; i > 0; i--) {
+void shift(distanced_flower *a, int l)
+{
+    for (int i = l - 1; i > 0; i--)
+    {
         a[i] = a[i - 1];
     }
 }
@@ -104,25 +106,30 @@ int max_index(int *a, int n)
 }
 
 // Used once per flower, I swear
-void bubble_sort(distanced_flower *neighbors, int n) {
+void bubble_sort(distanced_flower *neighbors, int n)
+{
     int swapped = 1;
-    for (int i = 0; i < n && swapped; i++) {
+    for (int i = 0; i < n && swapped; i++)
+    {
         swapped = 0;
-        for (int j = 1; j < n; j++) {
-            if (neighbors[j].distance < neighbors[j - 1].distance) {
+        for (int j = 1; j < n; j++)
+        {
+            if (neighbors[j].distance < neighbors[j - 1].distance)
+            {
                 swapped = 1;
                 distanced_flower temp = neighbors[j];
                 neighbors[j] = neighbors[j - 1];
                 neighbors[j - 1] = temp;
             }
         }
-    } 
+    }
 }
 
 int k_plus_proches_voisins(int k, flower *flowers, int n, float mesures[4])
 {
     distanced_flower *neighbors = calloc(k, sizeof(distanced_flower));
-    for (int i = 0; i < k; i++) {
+    for (int i = 0; i < k; i++)
+    {
         neighbors[i].classe = flowers[i].classe;
         neighbors[i].distance = distance_man(mesures, flowers[i].mesures);
     }
@@ -141,25 +148,31 @@ int k_plus_proches_voisins(int k, flower *flowers, int n, float mesures[4])
     return max_index(classes, 3);
 }
 
-int *matrice_confusion(int k, flower *jeu_entr, int n_entr, flower *jeu_test, int n_test) {
+int *matrice_confusion(int k, flower *jeu_entr, int n_entr, flower *jeu_test, int n_test)
+{
     int *mat = calloc(9, sizeof(int));
-    for (int i = 0; i < n_test; i++) {
+    for (int i = 0; i < n_test; i++)
+    {
         flower f = jeu_test[i];
         mat[3 * f.classe + k_plus_proches_voisins(k, jeu_entr, n_entr, f.mesures)]++;
     }
     return mat;
 }
 
-void print_matrice(int *mat, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
+void print_matrice(int *mat, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
             printf("%3d", mat[i * n + j]);
         }
         printf("\n");
     }
 }
 
-float taux_taux_erreur_global(int *mat, int n) {
+float taux_taux_erreur_global(int *mat, int n)
+{
     int tot = 0;
     for (int i = 0; i < n * n; i++)
         tot += mat[i];
@@ -170,7 +183,7 @@ float taux_taux_erreur_global(int *mat, int n) {
 
     int err = tot - diag;
 
-    return err / (float) tot;
+    return err / (float)tot;
 }
 
 int main()
