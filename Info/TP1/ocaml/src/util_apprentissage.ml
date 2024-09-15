@@ -72,7 +72,7 @@ let max_index a =
 (* Contre le nombre d'occurences de e dans un tableau *)
 let count e = Array.fold_left (fun acc e' -> if e = e' then acc + 1 else acc) 0
 
-let rec minf f = function
+let minf f = function
   | [] -> failwith "Nah fuck you"
   | h :: t ->
     let rec aux acc = function
@@ -83,17 +83,8 @@ let rec minf f = function
 
 
 let sgn x = if x < 0. then -1 else if x > 0. then 1 else 0
-(* Renvoie la classe supposée en utilisant l'algo des k-plus proches voisins *)
-(* dist: la fcontion de distance utilisée *)
-(* k: Le nombre de voisins à utiliser *)
-(* fleurs: Le jeu d'entraînement *)
-(* f: Les mesures de la fleur à tester *)
-let k_plus_proches_voisins (dist: float array -> float array -> float) (k: int) (fleurs: fleur list) (f: float array) : int =
-  let distances = List.sort (fun (a,_) (b,_) -> sgn (a -. b)) @@ List.map (fun fl -> (dist fl.mesures f, fl.etiquette)) fleurs in
-  let k_plus_proches = take k distances in
-  let a = Array.make 3 0 in
-  List.iter (fun (_, e) -> a.(e - 1) <- a.(e - 1) + 1) k_plus_proches;
-  max_index a + 1
+
+
 
 (* Renvoie la matrice de confusion d'un jeu de test "fleurs" en utilisant la fonction "f" pour deviner la classe *)
 let matrice_confusion (f: float array -> int) (fleurs: fleur list): int array array =
@@ -118,18 +109,3 @@ let taux_erreur_global (mat: int array array): float =
   let tot = Array.fold_left (+) 0 (Array.map (Array.fold_left (+) 0) mat) in
   let err = tot - (List.fold_left (+) 0 (get_diag mat)) in 
   float_of_int err /. float_of_int tot
-
-let jeu_entr = lire_iris "iris_jeu_entr.csv" 
-let jeu_test = lire_iris "iris_jeu_test.csv"
-let taux_erreur_selon_k dist k = taux_erreur_global @@ (matrice_confusion (k_plus_proches_voisins dist k jeu_entr)) jeu_test
-let taux_euc = List.map (taux_erreur_selon_k distance_euc) (List.init 20 ((+) 1))
-let taux_man = List.map (taux_erreur_selon_k distance_man) (List.init 20 ((+) 1))
-let () =
-  print_endline "Taux d'erreur en fonction de k avec distance euclidienne";
-  print_float_list taux_euc;
-  print_endline "Taux d'erreur en fonction de k avec distance de manhattan";
-  print_float_list taux_man;
-  print_newline ()
-
-let mat = matrice_confusion (k_plus_proches_voisins distance_man 2 jeu_entr) jeu_test
-let () = print_matrice mat

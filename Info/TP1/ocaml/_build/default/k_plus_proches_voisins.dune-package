@@ -1,0 +1,4 @@
+(lang dune 3.16)
+(name k_plus_proches_voisins)
+(sections (lib .))
+(files (lib (META dune-package)))

@@ -1,0 +1,29 @@
+# dune build src
+# OCAMLPARAM: unset
+# Shared cache: disabled
+# Shared cache location: /home/codespace/.cache/dune/db
+# Workspace root: /workspaces/codespaces-blank/Info/TP1/ocaml
+# Auto-detected concurrency: 4
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; instrument_with = []
+#  }
+$ /home/codespace/.opam/5.2.0/bin/ocamlc.opt -config > /tmp/dune_4209e1_output
+$ (cd _build/default && /home/codespace/.opam/5.2.0/bin/ocamldep.opt -modules -impl src/main.ml) > _build/default/src/.main.eobjs/dune__exe__Main.impl.d
+$ (cd _build/default && /home/codespace/.opam/5.2.0/bin/ocamldep.opt -modules -impl src/iris.ml) > _build/default/src/.main.eobjs/dune__exe__Iris.impl.d
+$ (cd _build/default && /home/codespace/.opam/5.2.0/bin/ocamldep.opt -modules -impl src/util_apprentissage.ml) > _build/default/src/.main.eobjs/dune__exe__Util_apprentissage.impl.d
+$ (cd _build/default && /home/codespace/.opam/5.2.0/bin/ocamlc.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -bin-annot-occurrences -I src/.main.eobjs/byte -I file_prio/.file_prio.objs/byte -no-alias-deps -opaque -open Dune__exe -o src/.main.eobjs/byte/dune__exe__Util_apprentissage.cmo -c -impl src/util_apprentissage.ml)
+$ (cd _build/default && /home/codespace/.opam/5.2.0/bin/ocamlc.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -bin-annot-occurrences -I src/.main.eobjs/byte -I file_prio/.file_prio.objs/byte -no-alias-deps -opaque -open Dune__exe -o src/.main.eobjs/byte/dune__exe__Iris.cmo -c -impl src/iris.ml)
+$ (cd _build/default && /home/codespace/.opam/5.2.0/bin/ocamlopt.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.main.eobjs/byte -I src/.main.eobjs/native -I file_prio/.file_prio.objs/byte -I file_prio/.file_prio.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o src/.main.eobjs/native/dune__exe__Main.cmx -c -impl src/main.ml)
+> File "src/main.ml", line 3, characters 15-24:
+> 3 | let jeu_entr = lire_iris "iris_jeu_entr.csv" 
+>                    ^^^^^^^^^
+> Error: Unbound value lire_iris
+[2]
+$ (cd _build/default && /home/codespace/.opam/5.2.0/bin/ocamlopt.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.main.eobjs/byte -I src/.main.eobjs/native -I file_prio/.file_prio.objs/byte -I file_prio/.file_prio.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o src/.main.eobjs/native/dune__exe__Iris.cmx -c -impl src/iris.ml)
+$ (cd _build/default && /home/codespace/.opam/5.2.0/bin/ocamlopt.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.main.eobjs/byte -I src/.main.eobjs/native -I file_prio/.file_prio.objs/byte -I file_prio/.file_prio.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o src/.main.eobjs/native/dune__exe__Util_apprentissage.cmx -c -impl src/util_apprentissage.ml)

@@ -189,8 +189,8 @@ float taux_taux_erreur_global(int *mat, int n)
 int main()
 {
     int n_entr, n_test;
-    flower *jeu_entr = read_file("./iris_jeu_entr.csv", &n_entr);
-    flower *jeu_test = read_file("./iris_jeu_test.csv", &n_test);
+    flower *jeu_entr = read_file("../iris_jeu_entr.csv", &n_entr);
+    flower *jeu_test = read_file("../iris_jeu_test.csv", &n_test);
     int *mat = matrice_confusion(5, jeu_entr, n_entr, jeu_test, n_test);
     print_matrice(mat, 3);
     printf("Taux d'erreur: %.3f\n", taux_taux_erreur_global(mat, 3));
