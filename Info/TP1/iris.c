@@ -103,6 +103,22 @@ int max_index(int *a, int n)
     return m;
 }
 
+// Used once pear flower I swear
+void bubble_sort(distanced_flower *neighbors, int n) {
+    int swapped = 1;
+    for (int i = 0; i < n && swapped; i++) {
+        swapped = 0;
+        for (int j = 1; j < n; j++) {
+            if (neighbors[j].distance < neighbors[j - 1].distance) {
+                swapped = 1;
+                distanced_flower temp = neighbors[j];
+                neighbors[j] = neighbors[j - 1];
+                neighbors[j - 1] = temp;
+            }
+        }
+    } 
+}
+
 int k_plus_proches_voisins(int k, flower *flowers, int n, float mesures[4])
 {
     distanced_flower *neighbors = calloc(k, sizeof(distanced_flower));
@@ -110,6 +126,7 @@ int k_plus_proches_voisins(int k, flower *flowers, int n, float mesures[4])
         neighbors[i].classe = flowers[i].classe;
         neighbors[i].distance = distance_man(mesures, flowers[i].mesures);
     }
+    bubble_sort(neighbors, k);
 
     for (int i = k; i < n; i++)
     {
@@ -120,6 +137,7 @@ int k_plus_proches_voisins(int k, flower *flowers, int n, float mesures[4])
     {
         classes[neighbors[i].classe]++;
     }
+    // free(neighbors);
     return max_index(classes, 3);
 }
 
@@ -141,6 +159,20 @@ void print_matrice(int *mat, int n) {
     }
 }
 
+float taux_taux_erreur_global(int *mat, int n) {
+    int tot = 0;
+    for (int i = 0; i < n * n; i++)
+        tot += mat[i];
+
+    int diag = 0;
+    for (int i = 0; i < n; i++)
+        diag += mat[i * n + i];
+
+    int err = tot - diag;
+
+    return err / (float) tot;
+}
+
 int main()
 {
     int n_entr, n_test;
@@ -148,5 +180,6 @@ int main()
     flower *jeu_test = read_file("./iris_jeu_test.csv", &n_test);
     int *mat = matrice_confusion(5, jeu_entr, n_entr, jeu_test, n_test);
     print_matrice(mat, 3);
+    printf("Taux d'erreur: %.3f\n", taux_taux_erreur_global(mat, 3));
     return EXIT_SUCCESS;
 }
