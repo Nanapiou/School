@@ -82,11 +82,11 @@ void shift(distanced_flower *a, int l) {
 void insert(distanced_flower *neighbors, int k, flower f, float distance)
 {
     int i = 1;
-    while (neighbors[k - i].distance > distance && i < k)
+    while (neighbors[k - i].distance > distance && i <= k)
         i++;
     if (i == 1)
         return;
-    int ind = k - i - 1;
+    int ind = k - i + 1;
     shift(&neighbors[ind], k - ind);
     neighbors[ind].classe = f.classe;
     neighbors[ind].distance = distance;
@@ -103,7 +103,7 @@ int max_index(int *a, int n)
     return m;
 }
 
-// Used once pear flower I swear
+// Used once per flower, I swear
 void bubble_sort(distanced_flower *neighbors, int n) {
     int swapped = 1;
     for (int i = 0; i < n && swapped; i++) {
@@ -137,7 +137,7 @@ int k_plus_proches_voisins(int k, flower *flowers, int n, float mesures[4])
     {
         classes[neighbors[i].classe]++;
     }
-    // free(neighbors);
+    free(neighbors);
     return max_index(classes, 3);
 }
 
