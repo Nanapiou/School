@@ -45,6 +45,7 @@ flower *read_file(char path[], int *n)
         flowers[i].classe = classe_of_string(c);
         i++;
     }
+    fclose(f);
 
     *n = i;
     return flowers;

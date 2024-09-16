@@ -3,11 +3,14 @@
 (** @canonical Dune__exe.Ddim *)
 module Ddim = Dune__exe__Ddim
 
-(** @canonical Dune__exe.Iris *)
-module Iris = Dune__exe__Iris
+(** @canonical Dune__exe.Iris_simple *)
+module Iris_simple = Dune__exe__Iris_simple
 
-(** @canonical Dune__exe.Iris_simpl *)
-module Iris_simpl = Dune__exe__Iris_simpl
+(** @canonical Dune__exe.Kppv *)
+module Kppv = Dune__exe__Kppv
+
+(** @canonical Dune__exe.Kppv2 *)
+module Kppv2 = Dune__exe__Kppv2
 
 (** @canonical Dune__exe.Main *)
 module Main = Dune__exe__Main

@@ -81,10 +81,16 @@ let minf f = function
     in
     aux h t
 
+let maxf f = function
+| [] -> failwith "Nah fuck you"
+| h :: t ->
+  let rec aux acc = function
+    | [] -> acc 
+    | h :: t -> aux (if f h > f acc then h else acc) t
+  in
+  aux h t
 
 let sgn x = if x < 0. then -1 else if x > 0. then 1 else 0
-
-
 
 (* Renvoie la matrice de confusion d'un jeu de test "fleurs" en utilisant la fonction "f" pour deviner la classe *)
 let matrice_confusion (f: float array -> int) (fleurs: fleur list): int array array =
