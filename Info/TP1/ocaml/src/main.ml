@@ -1,6 +1,7 @@
 open Kppv2
 open Util_apprentissage
 open Ddim
+open Id3
 
 let jeu_entr = lire_iris "../iris_jeu_entr.csv" 
 let jeu_test = lire_iris "../iris_jeu_test.csv"
@@ -22,3 +23,9 @@ let () = print_matrice mat *)
 
 let mat = matrice_confusion (k_plus_proches_voisins2 5 arbre) jeu_test
 let () = print_matrice mat
+
+(* let intervalles = tableaux_intervalles 4 jeu_entr 
+let () = 
+  Array.iter (Fun.compose print_float_list Array.to_list) intervalles *)
+
+let () = print_int (determiner_intervalle [|2.5; 5.; 7.5|] 0.2)
