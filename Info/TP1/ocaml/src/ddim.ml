@@ -1,7 +1,12 @@
 open Util_apprentissage
-(* Noeud of dim * point * classe et Feuille of point * classe *)
+(* Noeud of dim * point * classe *)
 type arbredd = Noeud of int * float array * int * arbredd * arbredd | Vide
 
+(*
+Trouve sur quelle dimension découper
+d: Nombre de dimensions
+e: Ensemble de etiquette * mesures
+*)
 let find_dimension d e =
   let widths = Array.make d 0. in 
   for i = 0 to d - 1 do
@@ -11,12 +16,21 @@ let find_dimension d e =
   done;
   max_index widths
 
+(*
+Trouve sur quel élément découper
+i: la dimension
+e: l'ensemble
+*)
 let find_mid_elt i e =
   let l = List.length e in 
   let e = List.sort (fun (_, a) (_, b) -> sgn (a.(i) -. b.(i))) e in
   List.nth e (l / 2)
 
-
+(*
+Créé l'arbre d-dimensionnel
+d: nombre de dimension (Normalement non nécessaire, car Array.length?)
+e: Ensemble (liste) de etiquette * mesures
+*)
 let rec creer_arbredd (d: int): (int * float array) list -> arbredd = function
   | [] -> Vide
   | e ->

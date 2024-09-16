@@ -14,6 +14,7 @@ let file_iter = Array.iter
 let file_enfiler (compare: 'a -> 'a -> int) (f: 'a file) (e: 'a): 'a file =
   let f = Array.append f [|e|] in 
   let i = ref @@ Array.length f - 1 in
+  (* Remonter l'élément *)
   while !i > 0 && compare (f.(!i)) (f.((!i - 1) / 2)) > 0 do
     echanger f !i ((!i - 1) / 2);
     i := (!i - 1) / 2
@@ -26,7 +27,8 @@ let file_defiler (compare: 'a -> 'a -> int) (f: 'a file): 'a file * 'a =
   f.(0) <- f.(len - 1);
   let f = Array.sub f 0 (len - 1) in
   let len = len - 1 in
-  let i = ref 0 in 
+  let i = ref 0 in
+  (* "Tasser" (redescendre l'élément) *)
   while !i < len do
     let left = 2 * !i + 1 in 
     let right = 2 * !i + 2 in
