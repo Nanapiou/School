@@ -1,6 +1,6 @@
 open Util_apprentissage
 (* Noeud of dim * point * classe et Feuille of point * classe *)
-type arbredd = Noeud of int * float array * int * arbredd * arbredd | Feuille of float array * int
+type arbredd = Noeud of int * float array * int * arbredd * arbredd | Vide
 
 let find_dimension d e =
   let widths = Array.make d 0. in 
@@ -18,8 +18,7 @@ let find_mid_elt i e =
 
 
 let rec creer_arbredd (d: int): (int * float array) list -> arbredd = function
-  | [] -> failwith "How mf"
-  | [c, x] -> Feuille (x, c) 
+  | [] -> Vide
   | e ->
     let i = find_dimension d e in 
     let c, x = find_mid_elt i e in 

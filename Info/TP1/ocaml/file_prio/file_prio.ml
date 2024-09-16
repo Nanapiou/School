@@ -41,3 +41,13 @@ let file_defiler (compare: 'a -> 'a -> int) (f: 'a file): 'a file * 'a =
     end else i := len
   done;
   (f, elt)
+
+let heap_sort comp l =
+  let f = List.fold_left (file_enfiler comp) file_vide l in 
+  let rec aux f l =
+    if file_est_vide f then l 
+    else
+      let f, e = file_defiler comp f in 
+      aux f (e :: l)
+  in
+  aux f []

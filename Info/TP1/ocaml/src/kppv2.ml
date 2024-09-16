@@ -16,7 +16,7 @@ let k_plus_proches_voisins2 (k: int) (a: arbredd) (mesures: float array): int =
     else let (f, _) = defiler f in enfiler f (dist, c)
   in
   let rec aux f = function
-    | Feuille (x, c) -> traiter f x c
+    | Vide -> f
     | Noeud (i, y, c, gauche, droite) ->
       (* Doesn't stand for "Fuck You Coward" *)
       let f = traiter f y c in
