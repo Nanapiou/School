@@ -1,27 +1,29 @@
 type fleur = {mesures : float array; etiquette : int}
+type ('a, 'b) either = ('a, 'b) Either.t
 
+(* Don't worry I know what I'm doing *)
+(* It's needed for the use of Either in the pattern matching *)
+[@@@warning "-8"]
 let lire_iris (nom_fichier:string) =
   let fichier = open_in nom_fichier in
   let rec lecture_ligne_a_ligne fleurs =
        match In_channel.input_line fichier with
       | None -> fleurs
       | Some ligne -> 
-        let liste_attributs = String.split_on_char ',' ligne in
-        let tab_attributs = Array.of_list liste_attributs in
-        let x0 = float_of_string tab_attributs.(0) in
-        let x1 = float_of_string tab_attributs.(1) in
-        let x2 = float_of_string tab_attributs.(2) in
-        let x3 = float_of_string tab_attributs.(3) in
+        let [Left x0; Left x1; Left x2; Left x3; Right e] =
+          List.mapi (fun i e -> if i = 4 then Either.Right e else Either.Left (float_of_string e)) @@ String.split_on_char ',' ligne in
         let espece = 
-          if tab_attributs.(4) = "setosa" then 1
-          else if tab_attributs.(4) = "versicolor" then 2
-          else if tab_attributs.(4) = "virginica" then 3        
-          else failwith "nom d'espèce invalide"
+          match e with
+          | "setosa" -> 1
+          | "versicolor" -> 2
+          | "virginica" -> 3
+          | _ -> failwith "nom d'espèce invalide"
         in
-          {mesures = [|x0;x1;x2;x3|]; etiquette = espece}::(lecture_ligne_a_ligne fleurs)
+          {mesures = [|x0;x1;x2;x3|]; etiquette = espece} :: (lecture_ligne_a_ligne fleurs)
   in 
   let _ = In_channel.input_line fichier in  
   lecture_ligne_a_ligne []
+[@@@warning "+8"]
 
 (* Affiche une liste de fleurs *)
 let print_fleur_list: fleur list -> unit =
