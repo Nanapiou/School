@@ -20,5 +20,5 @@ let () =
 let mat = matrice_confusion (k_plus_proches_voisins distance_man 2 jeu_entr) jeu_test
 let () = print_matrice mat *)
 
-let mat = matrice_confusion (k_plus_proches_voisins2 4 arbre) jeu_test
+let mat = matrice_confusion (k_plus_proches_voisins2 5 arbre) jeu_test
 let () = print_matrice mat
