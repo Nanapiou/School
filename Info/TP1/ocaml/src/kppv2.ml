@@ -6,8 +6,7 @@ let compare_couples (a, _) (b, _) = Float.compare a b
 let enfiler = File_prio.file_enfiler compare_couples
 let defiler = File_prio.file_defiler compare_couples
 
-
-let k_plus_proches_voisins2 (k: int) (a: arbredd) (mesures: float array): int =
+let creer_file_k_voisins (k: int) (a: arbredd) (mesures: float array) =
   let traiter f (x: float array) (c: int) =
     if File_prio.file_taille f < k then enfiler f (distance_man x mesures, c) else
     let (d, _) = File_prio.file_tete f in
@@ -28,7 +27,10 @@ let k_plus_proches_voisins2 (k: int) (a: arbredd) (mesures: float array): int =
         if dz < y.(i) -. mesures.(i) then f 
         else aux f second
   in
-  let f = aux File_prio.file_vide a in
+  aux File_prio.file_vide a 
+
+let k_plus_proches_voisins2 (k: int) (a: arbredd) (mesures: float array): int =
+  let f = creer_file_k_voisins k a mesures in
   let result = Array.make 3 0 in 
   File_prio.file_iter (fun (_, c) -> result.(c - 1) <- result.(c - 1) + 1) f;
   max_index result + 1
