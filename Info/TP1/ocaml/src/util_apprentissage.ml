@@ -10,8 +10,10 @@ let lire_iris (nom_fichier:string) =
        match In_channel.input_line fichier with
       | None -> fleurs
       | Some ligne -> 
-        let [Left x0; Left x1; Left x2; Left x3; Right e] =
-          List.mapi (fun i e -> if i = 4 then Either.Right e else Either.Left (float_of_string e)) @@ String.split_on_char ',' ligne in
+        let [Left x0; Left x1; Left x2; Left x3; Right e] = List.mapi
+          (fun i e -> if i = 4 then Either.Right e else Either.Left (float_of_string e)) 
+          (String.split_on_char ',' ligne)
+        in
         let espece = 
           match e with
           | "setosa" -> 1
