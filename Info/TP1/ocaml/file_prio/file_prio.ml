@@ -21,6 +21,7 @@ let file_enfiler (compare: 'a -> 'a -> int) (f: 'a file) (e: 'a): 'a file =
   f
 let file_defiler (compare: 'a -> 'a -> int) (f: 'a file): 'a file * 'a =
   let len = Array.length f in
+  if len = 0 then failwith "File vide" else
   let elt = f.(0) in 
   f.(0) <- f.(len - 1);
   let f = Array.sub f 0 (len - 1) in
