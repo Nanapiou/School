@@ -22,9 +22,7 @@ void afficher_afd(afd A)
     printf("Q: %d\nSigma: %d\nqI: %d\nFinaux: ", A.Q, A.Sigma, A.qI);
     for (int q = 0; q < A.Q; q++)
         if (A.finaux[q])
-        {
             printf("%d ", q);
-        }
 
     printf("\nDelta:\n");
     for (int q = 0; q < A.Q; q++)
@@ -73,7 +71,6 @@ int delta_etoile_afd(afd A, int q, char *u)
     for (; *u != '\0'; u++)
     {
         char c = *u - 'a';
-        // printf("%d, %d\n", c, q);
         q = A.delta[q][c];
         if (q == -1)
             return -1;
@@ -92,12 +89,14 @@ afd completer_afd(afd A)
     afd AA = init_afd(A.Q + 1, A.Sigma, A.qI);
     free(AA.finaux);
     AA.finaux = A.finaux;
+
     int puit = A.Q;
     for (int a = 0; a < A.Sigma; a++)
         ajout_transition_afd(AA, puit, a + 'a', puit);
 
     for (int q = 0; q < A.Q; q++)
-        for (int a = 0; a < A.Sigma; a++) {
+        for (int a = 0; a < A.Sigma; a++)
+        {
             int q_dest = A.delta[q][a];
             AA.delta[q][a] = q_dest == -1 ? puit : q_dest;
         }
@@ -106,18 +105,17 @@ afd completer_afd(afd A)
 
 bool accessible_aux(afd A, bool *cherches, bool *parcourus, int q_actuel)
 {
+    parcourus[q_actuel] = true;
     if (cherches[q_actuel])
         return true;
-    parcourus[q_actuel] = true;
     for (int a = 0; a < A.Sigma; a++)
     {
         int q = A.delta[q_actuel][a];
         if (q == -1)
             continue;
 
-        if (!parcourus[q])
-            if (accessible_aux(A, cherches, parcourus, q))
-                return true;
+        if (!parcourus[q] && accessible_aux(A, cherches, parcourus, q))
+            return true;
     }
     return false;
 }
@@ -125,7 +123,7 @@ bool accessible_aux(afd A, bool *cherches, bool *parcourus, int q_actuel)
 bool accessible_afd(afd A, int q)
 {
     bool *parcourus = calloc(A.Q, sizeof(bool));
-    bool *cherches = calloc(A.Q, sizeof(bool));
+    bool *cherches = calloc(A.Q, sizeof(bool)); // Dans le tas, car on ne connaît pas Q
     cherches[q] = true;
     bool resultat = accessible_aux(A, cherches, parcourus, A.qI);
     free(parcourus);
@@ -154,9 +152,9 @@ afd emonder_afd(afd A)
 
     for (int q = 0; q < A.Q; q++)
     {
-        bool utile = utile_afd(A, q);
-        utiles[q] = utile;
-        if (!utile)
+        bool est_utile = utile_afd(A, q);
+        utiles[q] = est_utile;
+        if (!est_utile)
         {
             n_inutiles++;
         }
@@ -172,14 +170,12 @@ afd emonder_afd(afd A)
         if (utiles[q])
         {
             if (A.finaux[q])
-            {
                 finaux[q - n_inutiles_avant_q[q]] = true;
-            }
+            
 
             if (q == A.qI)
-            {
                 qI = q - n_inutiles_avant_q[q];
-            }
+            
 
             delta[q - n_inutiles_avant_q[q]] = calloc(A.Sigma, sizeof(int));
             for (int a = 0; a < A.Sigma; a++)
@@ -193,7 +189,7 @@ afd emonder_afd(afd A)
         }
 
     afd AA = init_afd(n_utiles, A.Sigma, qI);
-    liberer_afd(AA);
+    liberer_afd(AA); // Pour libérer finaux et delta avant de les réassigner
     AA.finaux = finaux;
     AA.delta = delta;
     return AA;
@@ -330,7 +326,7 @@ int main(void)
     ajout_transition_afd(A2, 5, 'a', 3);
     ajout_transition_afd(A2, 5, 'b', 3);
 
-    afd A3 = init_afd(5, 2, 0);
+    afd A3 = init_afd(5, 2, 0); // cf Interro_1_afd
     A3.finaux[3] = true;
     ajout_transition_afd(A3, 0, 'a', 1);
     ajout_transition_afd(A3, 0, 'b', 2);
@@ -356,6 +352,8 @@ int main(void)
     // ajout_transition_afnd(B1, 5, 'a', 5); ajout_transition_afnd(B1, 5, 'b', 5);
 
     // liberer_afnd(B1);
+
+
     liberer_afd(A1);
     liberer_afd(A2);
     liberer_afd(A3);
