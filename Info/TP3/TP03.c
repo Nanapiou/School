@@ -17,6 +17,25 @@ struct AFD
 
 typedef struct AFD afd;
 
+void afficher_afd(afd A)
+{
+    printf("Q: %d\nSigma: %d\nqI: %d\nFinaux: ", A.Q, A.Sigma, A.qI);
+    for (int q = 0; q < A.Q; q++)
+        if (A.finaux[q])
+        {
+            printf("%d ", q);
+        }
+
+    printf("\nDelta:\n");
+    for (int q = 0; q < A.Q; q++)
+        for (int a = 0; a < A.Sigma; a++)
+        {
+            int q_dest = A.delta[q][a];
+            if (q_dest != -1)
+                printf("%d -- %c --> %d\n", q, a + 'a', q_dest);
+        }
+}
+
 void liberer_afd(afd A)
 {
     free(A.finaux);
@@ -71,29 +90,36 @@ bool reconnu_afd(afd A, char *u)
 afd completer_afd(afd A)
 {
     afd AA = init_afd(A.Q + 1, A.Sigma, A.qI);
+    free(AA.finaux);
+    AA.finaux = A.finaux;
     int puit = A.Q;
     for (int a = 0; a < A.Sigma; a++)
         ajout_transition_afd(AA, puit, a + 'a', puit);
 
     for (int q = 0; q < A.Q; q++)
-        for (int a = 0; a < A.Sigma; a++)
-            if (A.delta[q][a] == -1)
-                AA.delta[q][a] = puit;
+        for (int a = 0; a < A.Sigma; a++) {
+            int q_dest = A.delta[q][a];
+            AA.delta[q][a] = q_dest == -1 ? puit : q_dest;
+        }
+    return AA;
 }
 
 bool accessible_aux(afd A, bool *cherches, bool *parcourus, int q_actuel)
 {
+    if (cherches[q_actuel])
+        return true;
     parcourus[q_actuel] = true;
     for (int a = 0; a < A.Sigma; a++)
     {
         int q = A.delta[q_actuel][a];
-        if (cherches[q])
-            return true;
+        if (q == -1)
+            continue;
 
         if (!parcourus[q])
-            if (accessible_afd(A, q))
+            if (accessible_aux(A, cherches, parcourus, q))
                 return true;
     }
+    return false;
 }
 
 bool accessible_afd(afd A, int q)
@@ -110,7 +136,7 @@ bool accessible_afd(afd A, int q)
 bool coaccessible_afd(afd A, int q)
 {
     bool *parcourus = calloc(A.Q, sizeof(bool));
-    bool resultat = accessible_aux(A, A.finaux, parcourus, A.qI);
+    bool resultat = accessible_aux(A, A.finaux, parcourus, q);
     free(parcourus);
     return resultat;
 }
@@ -143,29 +169,31 @@ afd emonder_afd(afd A)
     int qI;
 
     for (int q = 0; q < A.Q; q++)
-    {
-        if (A.finaux[q])
-        {
-            finaux[q - n_inutiles_avant_q[q]] = true;
-        }
-
-        if (q = A.qI)
-        {
-            qI = q - n_inutiles_avant_q[q];
-        }
-
         if (utiles[q])
         {
+            if (A.finaux[q])
+            {
+                finaux[q - n_inutiles_avant_q[q]] = true;
+            }
+
+            if (q == A.qI)
+            {
+                qI = q - n_inutiles_avant_q[q];
+            }
+
             delta[q - n_inutiles_avant_q[q]] = calloc(A.Sigma, sizeof(int));
             for (int a = 0; a < A.Sigma; a++)
             {
                 int q_dest = A.delta[q][a];
-                delta[q - n_inutiles_avant_q[q]][a] = q_dest - n_inutiles_avant_q[q_dest];
+                if (q_dest != -1 && utiles[q_dest])
+                    delta[q - n_inutiles_avant_q[q]][a] = q_dest - n_inutiles_avant_q[q_dest];
+                else
+                    delta[q - n_inutiles_avant_q[q]][a] = -1;
             }
         }
-    }
 
     afd AA = init_afd(n_utiles, A.Sigma, qI);
+    liberer_afd(AA);
     AA.finaux = finaux;
     AA.delta = delta;
     return AA;
@@ -302,8 +330,22 @@ int main(void)
     ajout_transition_afd(A2, 5, 'a', 3);
     ajout_transition_afd(A2, 5, 'b', 3);
 
-
     afd A3 = init_afd(5, 2, 0);
+    A3.finaux[3] = true;
+    ajout_transition_afd(A3, 0, 'a', 1);
+    ajout_transition_afd(A3, 0, 'b', 2);
+
+    ajout_transition_afd(A3, 1, 'a', 1);
+    ajout_transition_afd(A3, 1, 'b', 3);
+
+    ajout_transition_afd(A3, 3, 'a', 2);
+    ajout_transition_afd(A3, 3, 'b', 2);
+
+    ajout_transition_afd(A3, 4, 'a', 1);
+    ajout_transition_afd(A3, 4, 'b', 1);
+
+    afficher_afd(A3);
+    afficher_afd(emonder_afd((completer_afd(A3))));
 
     // afnd B1 = init_afnd(6, 2);
     // B1.initiaux[0] = true; B1.initiaux[3] = true;
@@ -316,6 +358,7 @@ int main(void)
     // liberer_afnd(B1);
     liberer_afd(A1);
     liberer_afd(A2);
+    liberer_afd(A3);
 
     return EXIT_SUCCESS;
 }
