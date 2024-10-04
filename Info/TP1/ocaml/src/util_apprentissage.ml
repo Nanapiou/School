@@ -119,3 +119,24 @@ let taux_erreur_global (mat: int array array): float =
   let tot = Array.fold_left (+) 0 (Array.map (Array.fold_left (+) 0) mat) in
   let err = tot - (List.fold_left (+) 0 (get_diag mat)) in 
   float_of_int err /. float_of_int tot
+
+let rec remove_elt e = function
+  | [] -> []
+  | h :: t when h = e -> remove_elt e t 
+  | h :: t -> h :: remove_elt e t
+
+let rec remove_duplicate = function
+  | [] -> []
+  | h :: t -> remove_duplicate @@ h :: remove_elt h t
+
+let rec group =
+  let rec make_group acc v = function
+    | [] -> acc, []
+    | h :: t when h = v -> make_group (h :: acc) v t
+    | l -> acc, l
+  in
+  function
+    | [] -> []
+    | h :: t -> 
+      let g, l = make_group [h] h t in
+      g :: group l
