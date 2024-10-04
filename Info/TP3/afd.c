@@ -1,21 +1,13 @@
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <assert.h>
+#include "afd.h"
 
-// #include "dicts.h"
-
-struct AFD
+typedef struct AFD
 {
     int Q;
     int Sigma;
     int qI;
     bool *finaux;
     int **delta;
-};
-
-typedef struct AFD afd;
+} afd;
 
 void afficher_afd(afd A)
 {
@@ -171,11 +163,9 @@ afd emonder_afd(afd A)
         {
             if (A.finaux[q])
                 finaux[q - n_inutiles_avant_q[q]] = true;
-            
 
             if (q == A.qI)
                 qI = q - n_inutiles_avant_q[q];
-            
 
             delta[q - n_inutiles_avant_q[q]] = calloc(A.Sigma, sizeof(int));
             for (int a = 0; a < A.Sigma; a++)
@@ -352,7 +342,6 @@ int main(void)
     // ajout_transition_afnd(B1, 5, 'a', 5); ajout_transition_afnd(B1, 5, 'b', 5);
 
     // liberer_afnd(B1);
-
 
     liberer_afd(A1);
     liberer_afd(A2);
