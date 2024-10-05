@@ -333,15 +333,6 @@ int main(void)
     afficher_afd(A3);
     afficher_afd(emonder_afd((completer_afd(A3))));
 
-    // afnd B1 = init_afnd(6, 2);
-    // B1.initiaux[0] = true; B1.initiaux[3] = true;
-    // B1.finaux[2] = true; B1.finaux[5] = true;
-    // ajout_transition_afnd(B1, 0, 'a', 0); ajout_transition_afnd(B1, 0, 'b', 0);
-    // ajout_transition_afnd(B1, 0, 'a', 1); ajout_transition_afnd(B1, 1, 'b', 2);
-    // ajout_transition_afnd(B1, 3, 'b', 4); ajout_transition_afnd(B1, 4, 'a', 5);
-    // ajout_transition_afnd(B1, 5, 'a', 5); ajout_transition_afnd(B1, 5, 'b', 5);
-
-    // liberer_afnd(B1);
 
     liberer_afd(A1);
     liberer_afd(A2);

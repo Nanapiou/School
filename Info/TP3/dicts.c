@@ -1,34 +1,27 @@
-#include <math.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <assert.h>
-#include <limits.h>
-
 #include "dicts.h"
 
 const double phi = 1.61803398875;
 
-void liberer_liste(liste *lst)
+void liberer_liste(list *lst)
 {
     // Libère l'espace mémoire occupé par une liste.
     if (lst != NULL)
     {
-        liberer_liste(lst->suivant);
+        liberer_liste(lst->next);
         free(lst);
     }
 }
 
-liste *cons(int x, liste *lst)
+list *cons(int x, list *lst)
 {
     // Crée une nouvelle liste étant donnée une tête et une queue.
-    liste *ret = malloc(sizeof(*ret));
+    list *ret = malloc(sizeof(*ret));
     ret->val = x;
-    ret->suivant = lst;
+    ret->next = lst;
     return ret;
 }
 
-void list_free(list *lst)
+void list_free(list_key *lst)
 {
     // Libère l'espace mémoire occupé par une liste de doublons.
     if (lst != NULL)
@@ -38,10 +31,10 @@ void list_free(list *lst)
     }
 }
 
-list *constr(int k, int v, list *lst)
+list_key *constr(int k, int v, list_key *lst)
 {
     // Crée une nouvelle liste de doublons étant donnée une tête et une queue.
-    list *ret = malloc(sizeof(*ret));
+    list_key *ret = malloc(sizeof(*ret));
     ret->key = k;
     ret->val = v;
     ret->next = lst;
@@ -61,7 +54,7 @@ void dict_free(dict D)
 dict create(void)
 {
     // Crée un dictionnaire vide.
-    list **data = malloc(sizeof(*data));
+    list_key **data = malloc(sizeof(*data));
     data[0] = NULL;
     dict D = {.size = 0, .capacity = 1, .data = data};
     return D;
@@ -79,10 +72,10 @@ int hash(dict D, int k)
     return (int)floor(D.capacity * k * phi) % D.capacity;
 }
 
-bool member_list(list *lst, int k)
+bool member_list(list_key *lst, int k)
 {
     // Teste l'appartenance d'un entier à une liste.
-    list *tmp = lst;
+    list_key *tmp = lst;
     while (tmp != NULL)
     {
         if (tmp->key == k)
@@ -102,7 +95,7 @@ int get(dict D, int k)
 {
     // Renvoie la valeur associée à une clé dans un dictionnaire.
     assert(member(D, k));
-    list *tmp = D.data[hash(D, k)];
+    list_key *tmp = D.data[hash(D, k)];
     while (tmp->key != k)
     {
         tmp = tmp->next;
@@ -115,19 +108,19 @@ void resize(dict *D, int capa)
     // Redimensionne la table de hachage d'un dictionnaire.
     if (capa >= D->size)
     {
-        list **data = malloc(capa * sizeof(*data));
+        list_key **data = malloc(capa * sizeof(*data));
         for (int i = 0; i < capa; i++)
         {
             data[i] = NULL;
         }
-        list **old_data = D->data;
+        list_key **old_data = D->data;
         int old_capa = D->capacity;
         D->data = data;
         D->capacity = capa;
         D->size = 0;
         for (int i = 0; i < old_capa; i++)
         {
-            list *tmp = old_data[i];
+            list_key *tmp = old_data[i];
             while (tmp != NULL)
             {
                 add(D, tmp->key, tmp->val);
@@ -157,7 +150,7 @@ void del(dict *D, int k)
 {
     // Supprime une association d'un dictionnaire.
     int h = hash(*D, k);
-    list *tmp = D->data[h];
+    list_key *tmp = D->data[h];
     if (tmp->key == k)
     {
         D->data[h] = tmp->next;
@@ -172,7 +165,7 @@ void del(dict *D, int k)
         }
         if (tmp->next != NULL)
         {
-            list *tmp2 = tmp->next;
+            list_key *tmp2 = tmp->next;
             tmp->next = tmp2->next;
             D->size = D->size - 1;
             free(tmp2);
@@ -184,13 +177,13 @@ void del(dict *D, int k)
     }
 }
 
-liste *key_list(dict D)
+list *key_list(dict D)
 {
     // Renvoie la liste des clés d'un dictionnaire.
-    liste *lst = NULL;
+    list *lst = NULL;
     for (int i = 0; i < D.capacity; i++)
     {
-        list *tmp = D.data[i];
+        list_key *tmp = D.data[i];
         while (tmp != NULL)
         {
             lst = cons(tmp->key, lst);
