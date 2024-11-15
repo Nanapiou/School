@@ -26,6 +26,6 @@ let id = [|[|1; 0|]; [|0; 1|]|]
 
 let fibo n = (fast_expo id mult_mat fibo_mat n).(0).(1)
 
-let fibo_mat_n = fast_expo id mult_mat fibo_mat 20
+let fibo_mat_n = fast_expo id mult_mat fibo_mat 999999999999
 let print_mat = Array.iter (fun l -> Array.iter (Printf.printf "%d ") l; print_newline ())
 let () = print_mat fibo_mat_n
