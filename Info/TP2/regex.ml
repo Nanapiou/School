@@ -1,7 +1,13 @@
 type 'a regex = 
+<<<<<<< HEAD
      | Empty
      | Epsilon
      | Letter of 'a
+=======
+     | Vide
+     | Epsilon
+     | Lettre of 'a
+>>>>>>> 4d9dd378ac2ba933496270d1b3ae58987547ac62
      | Concat of 'a regex * 'a regex
      | Union of 'a regex * 'a regex
      | Etoile of 'a regex;;
@@ -39,6 +45,7 @@ let parse s =
     match peek () with
     | Some '(' -> eat '('; let r = regex () in eat ')'; r
     | Some '&' -> eat '&'; Epsilon
+<<<<<<< HEAD
     | Some '#' -> eat '#'; Empty
     | Some (')' | '|' | '*' as c) -> failwith (sprintf "unexpected '%c'" c)
     | Some c -> eat c; Letter c
@@ -56,3 +63,11 @@ let rec string_of_regex = function
 
 
 let is_empty: 'a regex -> bool = (==) Empty
+=======
+    | Some '#' -> eat '#'; Vide
+    | Some (')' | '|' | '*' as c) -> failwith (sprintf "unexpected '%c'" c)
+    | Some c -> eat c; Lettre c
+    | None -> failwith "unexpected end of string" in
+  let r = regex () in
+  if !i = n then r else failwith "trailing ')' ?";;
+>>>>>>> 4d9dd378ac2ba933496270d1b3ae58987547ac62

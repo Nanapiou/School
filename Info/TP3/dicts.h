@@ -1,33 +1,36 @@
-struct Liste {
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <assert.h>
+
+typedef struct List
+{
     int val;
-    struct Liste* suivant;
-};
+    struct List *next;
+} list;
 
-typedef struct Liste liste;
-
-struct List {
+typedef struct List_key
+{
     int key;
     int val;
-    struct List* next;
-};
+    struct List_key *next;
+} list_key;
 
-typedef struct List list;
-
-struct Dict{
+typedef struct Dict
+{
     int capacity;
     int size;
-    list** data;
-};
+    list_key **data;
+} dict;
 
-typedef struct Dict dict;
+void liberer_liste(list *lst);
 
-void liberer_liste(liste* lst);
+list *cons(int x, list *lst);
 
-liste* cons(int x, liste* lst);
+void list_free(list_key *lst);
 
-void list_free(list* lst);
-
-list* constr(int k, int v, list* lst);
+list_key *constr(int k, int v, list_key *lst);
 
 void dict_free(dict D);
 
@@ -37,16 +40,16 @@ int size(dict D);
 
 int hash(dict D, int k);
 
-bool member_list(list* lst, int k);
+bool member_list(list_key *lst, int k);
 
 bool member(dict D, int k);
 
 int get(dict D, int k);
 
-void resize(dict* D, int capa);
+void resize(dict *D, int capa);
 
-void add(dict* D, int k, int v);
+void add(dict *D, int k, int v);
 
-void del(dict* D, int k);
+void del(dict *D, int k);
 
-liste* key_list(dict D);
+list *key_list(dict D);

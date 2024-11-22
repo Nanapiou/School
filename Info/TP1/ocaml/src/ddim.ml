@@ -36,9 +36,9 @@ let rec creer_arbredd (d: int): (int * float array) list -> arbredd = function
   | e ->
     let i = find_dimension d e in 
     let c, x = find_mid_elt i e in 
-    (* We can do both at the same time, but I'm lazy *)
-    let left = List.filter (fun (_, elt) -> elt.(i) <= x.(i) && elt <> x) e in
-    let right = List.filter (fun (_, elt) -> elt.(i) > x.(i) && elt <> x) e in
+    let left, right = List.partition
+      (fun (_, elt) -> elt.(i) <= x.(i))
+      (List.filter (fun (_, elt) -> elt <> x) e) in
     Noeud (i, x, c, creer_arbredd d left, creer_arbredd d right)
 
   
