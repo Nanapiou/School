@@ -18,8 +18,14 @@ int main() {
     printf("Poids: %.1lf\n", sommes_poids(as, nb_aretes));
 
     int nb;
-    arete *krus = kruskal(g, &nb);
+    arete *brov = boruvska(g, &nb);
 
+    trier_aretes(brov, nb);
+    afficher_tableau_aretes(brov, nb);
+
+
+
+    arete *krus = kruskal(g, &nb);
     afficher_tableau_aretes(krus, nb);
 
     return EXIT_SUCCESS;

@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 typedef struct unir_trouver
 {
     int n;

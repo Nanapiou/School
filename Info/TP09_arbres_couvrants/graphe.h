@@ -30,6 +30,7 @@ double sommes_poids(arete* aretes, int nb_aretes);
 void trier_aretes(arete* aretes, int nb_aretes);
 
 arete* kruskal(graphe* g, int* nb_choisis);
+arete* boruvska(graphe* g, int* nb_choisis);
 
 
 // void parcours_largeur(graphe *g);

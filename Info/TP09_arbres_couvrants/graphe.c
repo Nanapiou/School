@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <stdbool.h>
+#include <math.h>
 
 graphe *creer_graphe(int n)
 {
@@ -209,6 +211,53 @@ arete* kruskal(graphe* g, int* nb_choisis) {
         }
     }
 
+    *nb_choisis = k;
+    return result;
+}
+
+arete* boruvska(graphe* g, int* nb_choisis) {
+    int nb_aretes = taille_graphe(g);
+
+    arete *result = malloc(nb_aretes * sizeof(arete));
+    int k = 0;
+
+    unir_trouver ut = creer_unir_trouver(g->n);
+    arete meilleur[g->n];
+    
+    bool loop = true;
+    while (loop)
+    {
+        for (int i = 0; i < g->n; i++)
+            meilleur[i] = (arete) {-1, -1, INFINITY};
+        
+        // Boucle sur sommets
+        for (int u = 0; u < g->n; u++) {
+            // Boucle sur les voisins de ce sommet
+            for (int i = 0; i < g->degres[u]; i++)
+            {
+                int repr = trouver(ut, u);
+                arete a = g->liste_adjacence[u][i];
+                if (repr == trouver(ut, a.t)) // Si dans la même composante connexe
+                    continue;
+
+                if (meilleur[repr].p > a.p || (meilleur[repr].p == a.p && u < a.t)) {
+                    meilleur[repr] = a;
+                }
+            }
+        }
+
+        loop = false;
+        for (int i = 0; i < g->n; i++)
+        {
+            if (ut.parent[i] == i && meilleur[i].p != INFINITY && trouver(ut, meilleur[i].s) != trouver(ut, meilleur[i].t)) {
+                loop = true;
+                result[k++] = meilleur[i];
+                unir(ut, meilleur[i].s, meilleur[i].t);
+            }
+        }
+        
+    }
+    
     *nb_choisis = k;
     return result;
 }
