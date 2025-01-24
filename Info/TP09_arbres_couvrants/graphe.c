@@ -17,9 +17,11 @@ graphe *creer_graphe(int n)
     return g;
 }
 
-int taille_graphe(graphe *g) {
+int taille_graphe(graphe *g)
+{
     int t = 0;
-    for (int i = 0; i < g->n; i++) {
+    for (int i = 0; i < g->n; i++)
+    {
         t += g->degres[i];
     }
     return t / 2;
@@ -28,9 +30,11 @@ int taille_graphe(graphe *g) {
 void afficher_graphe(graphe *g)
 {
     printf("%d\n", g->n);
-    for (int i = 0; i < g->n; i++) {
-        printf ("%d ", i);
-        for (int j = 0; j < g->degres[i]; j++) {
+    for (int i = 0; i < g->n; i++)
+    {
+        printf("%d ", i);
+        for (int j = 0; j < g->degres[i]; j++)
+        {
             printf("(%d, %.1lf) ", g->liste_adjacence[i][j].t, g->liste_adjacence[i][j].p);
         }
         printf("\n");
@@ -57,7 +61,8 @@ void ajouter_arc(graphe *g, int u, int v, double p)
     g->degres[u]++;
 }
 
-void ajouter_arete(graphe *g, int u, int v, double p) {
+void ajouter_arete(graphe *g, int u, int v, double p)
+{
     ajouter_arc(g, u, v, p);
     ajouter_arc(g, v, u, p);
 }
@@ -80,9 +85,11 @@ double poids_arete(graphe *g, int u, int v)
     return -1;
 }
 
-graphe *lire_graphe(char *nom_fichier) {
+graphe *lire_graphe(char *nom_fichier)
+{
     FILE *f = fopen(nom_fichier, "r");
-    if (f == NULL) {
+    if (f == NULL)
+    {
         fprintf(stderr, "Fichier non ouvert");
         exit(1);
     }
@@ -92,10 +99,12 @@ graphe *lire_graphe(char *nom_fichier) {
 
     graphe *g = creer_graphe(n);
 
-    for (int s = 0; s < n; s++) {
+    for (int s = 0; s < n; s++)
+    {
         int o;
         fscanf(f, "\n%d", &o);
-        for (int i = 0; i < o; i++) {
+        for (int i = 0; i < o; i++)
+        {
             int t;
             double p;
             fscanf(f, " (%d, %lf)", &t, &p);
@@ -109,31 +118,38 @@ graphe *lire_graphe(char *nom_fichier) {
     return g;
 }
 
-
-void ecrire_graphe(graphe *g, char *nom_fichier) {
+void ecrire_graphe(graphe *g, char *nom_fichier)
+{
     FILE *f = fopen(nom_fichier, "w");
-    if (f == NULL) {
+    if (f == NULL)
+    {
         fprintf(stderr, "Fichier non ouvert");
         exit(1);
     }
 
     fprintf(f, "%d\n", g->n);
-    for (int i = 0; i < g->n; i++) {
+    for (int i = 0; i < g->n; i++)
+    {
         fprintf(f, "%d ", i);
-        for (int j = 0; j < g->degres[i]; j++) {
-            fprintf(f, "(%d, %d) ", g->liste_adjacence[i][j].t, (int) g->liste_adjacence[i][j].p);
+        for (int j = 0; j < g->degres[i]; j++)
+        {
+            fprintf(f, "(%d, %d) ", g->liste_adjacence[i][j].t, (int)g->liste_adjacence[i][j].p);
         }
-        if (i != g->n - 1) fprintf(f, "\n");
+        if (i != g->n - 1)
+            fprintf(f, "\n");
     }
 }
 
-arete* obtenir_aretes(graphe* g, int* nb_aretes) {
+arete *obtenir_aretes(graphe *g, int *nb_aretes)
+{
     int taille = taille_graphe(g);
     arete *as = calloc(taille, sizeof(arete));
 
     int k = 0;
-    for (int i = 0; i < g->n; i++) {
-        for (int j = 0; j < g->degres[i]; j++) {
+    for (int i = 0; i < g->n; i++)
+    {
+        for (int j = 0; j < g->degres[i]; j++)
+        {
             arete a = g->liste_adjacence[i][j];
             if (a.s < a.t)
                 as[k++] = a;
@@ -144,24 +160,29 @@ arete* obtenir_aretes(graphe* g, int* nb_aretes) {
     return as;
 }
 
-void afficher_tableau_aretes(arete* aretes, int nb_aretes) {
-    for (int i = 0; i < nb_aretes; i++) {
+void afficher_tableau_aretes(arete *aretes, int nb_aretes)
+{
+    for (int i = 0; i < nb_aretes; i++)
+    {
         printf("(%d, %d, %.1lf) ", aretes[i].s, aretes[i].t, aretes[i].p);
     }
     printf("\n");
 }
 
-double sommes_poids(arete* aretes, int nb_aretes) {
+double sommes_poids(arete *aretes, int nb_aretes)
+{
     double p_tot = 0;
 
-    for (int i = 0; i < nb_aretes; i++) 
+    for (int i = 0; i < nb_aretes; i++)
         p_tot += aretes[i].p;
 
     return p_tot;
 }
 
-void trier_aretes(arete *aretes, int nb_aretes) {
-    if (nb_aretes == 0 || nb_aretes == 1) {
+void trier_aretes(arete *aretes, int nb_aretes)
+{
+    if (nb_aretes == 0 || nb_aretes == 1)
+    {
         return;
     }
 
@@ -173,26 +194,33 @@ void trier_aretes(arete *aretes, int nb_aretes) {
 
     arete result[nb_aretes];
     int i = 0, j = 0, k = 0;
-    while (i < l1 && j < l2) {
-        if (a1[i].p < a2[j].p) {
+    while (i < l1 && j < l2)
+    {
+        if (a1[i].p < a2[j].p)
+        {
             result[k++] = a1[i++];
-        } else {
+        }
+        else
+        {
             result[k++] = a2[j++];
         }
     }
 
-    while (i < l1) {
+    while (i < l1)
+    {
         result[k++] = a1[i++];
     }
 
-    while (j < l2) {
+    while (j < l2)
+    {
         result[k++] = a2[j++];
     }
 
     memcpy(aretes, result, nb_aretes * sizeof(arete));
 }
 
-arete* kruskal(graphe* g, int* nb_choisis) {
+arete *kruskal(graphe *g, int *nb_choisis)
+{
     int nb_aretes;
     arete *as = obtenir_aretes(g, &nb_aretes);
 
@@ -202,10 +230,12 @@ arete* kruskal(graphe* g, int* nb_choisis) {
     trier_aretes(as, nb_aretes);
 
     unir_trouver ut = creer_unir_trouver(g->n);
-    for (int i = 0; i < nb_aretes; i++) {
+    for (int i = 0; i < nb_aretes; i++)
+    {
         arete a = as[i];
         int s = a.s, t = a.t;
-        if (trouver(ut, s) != trouver(ut, t)) {
+        if (trouver(ut, s) != trouver(ut, t))
+        {
             unir(ut, s, t);
             result[k++] = a;
         }
@@ -215,7 +245,8 @@ arete* kruskal(graphe* g, int* nb_choisis) {
     return result;
 }
 
-arete* boruvska(graphe* g, int* nb_choisis) {
+arete *boruvska(graphe *g, int *nb_choisis)
+{
     int nb_aretes = taille_graphe(g);
 
     arete *result = malloc(nb_aretes * sizeof(arete));
@@ -223,15 +254,16 @@ arete* boruvska(graphe* g, int* nb_choisis) {
 
     unir_trouver ut = creer_unir_trouver(g->n);
     arete meilleur[g->n];
-    
+
     bool loop = true;
     while (loop)
     {
         for (int i = 0; i < g->n; i++)
-            meilleur[i] = (arete) {-1, -1, INFINITY};
-        
+            meilleur[i] = (arete){-1, -1, INFINITY};
+
         // Boucle sur sommets
-        for (int u = 0; u < g->n; u++) {
+        for (int u = 0; u < g->n; u++)
+        {
             // Boucle sur les voisins de ce sommet
             for (int i = 0; i < g->degres[u]; i++)
             {
@@ -240,7 +272,8 @@ arete* boruvska(graphe* g, int* nb_choisis) {
                 if (repr == trouver(ut, a.t)) // Si dans la même composante connexe
                     continue;
 
-                if (meilleur[repr].p > a.p || (meilleur[repr].p == a.p && u < a.t)) {
+                if (meilleur[repr].p > a.p || (meilleur[repr].p == a.p && u < a.t))
+                {
                     meilleur[repr] = a;
                 }
             }
@@ -249,15 +282,15 @@ arete* boruvska(graphe* g, int* nb_choisis) {
         loop = false;
         for (int i = 0; i < g->n; i++)
         {
-            if (ut.parent[i] == i && meilleur[i].p != INFINITY && trouver(ut, meilleur[i].s) != trouver(ut, meilleur[i].t)) {
+            if (ut.parent[i] == i && meilleur[i].p != INFINITY && trouver(ut, meilleur[i].s) != trouver(ut, meilleur[i].t))
+            {
                 loop = true;
                 result[k++] = meilleur[i];
                 unir(ut, meilleur[i].s, meilleur[i].t);
             }
         }
-        
     }
-    
+
     *nb_choisis = k;
     return result;
 }
