@@ -1,0 +1,6 @@
+(executable
+ (name main)
+ (public_name main)
+ (modes byte exe) ; pour debugger
+ (flags (:standard "-g" "-w" "-26-27-32..38"))
+)
