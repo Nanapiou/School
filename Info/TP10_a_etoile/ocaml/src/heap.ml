@@ -6,6 +6,8 @@ type ('key, 'prio) t = {
 
 let length q = Vector.length q.priorities
 
+let is_empty g = 0 = length g
+
 let create () =
   {priorities = Vector.create ();
    keys = Vector.create ();
