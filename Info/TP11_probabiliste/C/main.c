@@ -5,6 +5,8 @@
 bool tester_solution(int k, int *pos) {
   for (int i = 0; i < k; i++) {
     int j = pos[i];
+    if (j == -1)
+      continue;
 
     // Vérifier la colonne
     for (int l = 0; l < k; l++)
@@ -37,7 +39,7 @@ bool tester_solution(int k, int *pos) {
 
 void afficher_tab(int k, int *tab) {
   for (int i = 0; i < k; i++)
-    printf("%d, ", tab[i]);
+    printf("%2d, ", tab[i]);
   printf("\n");
 }
 
@@ -80,19 +82,46 @@ int *force_brute(int k) {
   exit(EXIT_FAILURE);    
 }
 
+
+int *retour_sur_trace(int k) {
+  int k_zaine_indice = 0;
+  int *a = malloc(sizeof(int) * k);
+  a[0] = 0;
+  for (int i = 1; i < k; i++)
+    a[i] = -1;
+
+  while (a[0] < k) { // Si a[0] atteint k, on a testé toutes les positions possibles (mauvaise nouvelle)
+    // afficher_tab(k, a);
+    if (tester_solution(k, a)) {
+      if (a[k - 1] != -1)
+        return a;
+      a[++k_zaine_indice] = 0;
+    } else {
+      while (a[k_zaine_indice] == k - 1) {
+        a[k_zaine_indice--] = -1;
+      }
+      a[k_zaine_indice]++;
+    }
+
+  }
+  printf("No solution found!\n");
+  exit(EXIT_FAILURE);
+}
+
+
 void afficher_plateau(int k, int *pos) {
   for (int i = 0; i < k; i++) {
     int j = pos[i];
     for (int l = 0; l < k; l++) {
-      printf("%d", j == l);
+      printf("%s ", j == l ? "■" : "□");
     }
     printf("\n");
   }
 }
 
 int main() {
-  int k = 13;
-  int *soluce = force_brute(k);
+  int k = 20;
+  int *soluce = retour_sur_trace(k);
   afficher_plateau(k, soluce);
   return EXIT_SUCCESS;
 }
