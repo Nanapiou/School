@@ -119,6 +119,10 @@ void afficher_plateau(int k, int *pos) {
   }
 }
 
+int *las_vegas(int k) {
+  exit(EXIT_FAILURE);
+}
+
 int main() {
   int k = 20;
   int *soluce = retour_sur_trace(k);
