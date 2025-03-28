@@ -85,7 +85,7 @@ let ffd v vs =
   first_fit v vs
 
 (* Doesn't work for now, idk why (doesn't give the good result, stuck on the ffd one) *)
-let bb_bnb v_max (volumes: int array): int =
+let bb_bnb' v_max (volumes: int array): int =
   let n = Array.length volumes in
   let upper_bound = ffd v_max volumes in (* At least, it's a good start in O(nlogn) *)
   let rec depth_search up_bound (boxes: box array) (depth as i: int) = (* Boxes is an array cuz otherwise it would bring a O(n²) to stay with lists... *)
@@ -111,6 +111,26 @@ let bb_bnb v_max (volumes: int array): int =
     end
   in
   depth_search upper_bound [||] 0
+
+let bb_bnb v_max (volumes: int array): int =
+  let n = Array.length volumes in
+  let up_bound = ffd v_max volumes in
+  let rec depth_search bound (boxes: box list) (depth as i: int) =
+    let v = volumes.(i) in
+    let l = List.length boxes in (* Pretty sad, but need it *)
+    if i = n - 1 || l >= bound then min up_bound l else begin
+      let rec insert_box_everywhere = function
+        | [] -> []
+        | box :: t when does_fit box v -> (add i v box :: t) :: (List.map (List.cons box) (insert_box_everywhere t))
+        | box :: t -> (List.map (List.cons box) (insert_box_everywhere t))
+      in
+      let bound = List.fold_left (fun acc boxes' -> min acc (depth_search acc boxes' (i + 1))) bound (insert_box_everywhere boxes) in
+      min bound (depth_search bound ((add i v (new_box v_max)) :: boxes) (i + 1))
+    end
+  in
+  depth_search up_bound [] 0
+    
+   
 
 let () =
   Printf.printf "%d\n%d\n%d\n%d\n"
