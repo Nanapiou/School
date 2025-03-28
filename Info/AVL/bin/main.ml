@@ -1,1 +1,1 @@
-let () = print_endline "Hello, World!"
+type 'a arbre = Vide | Noeud of int * 'a * 'a arbre * 'a arbre
