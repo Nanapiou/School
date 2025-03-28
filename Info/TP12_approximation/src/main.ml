@@ -52,7 +52,7 @@ let new_box max_v = { remaining_volume = max_v; elements = [] }
 let next_fit max_v (volumes : int array) =
   let n = Array.length volumes in
   let rec aux acc i =
-    if i = n - 1 then acc
+    if i = n then acc
     else
       let v = volumes.(i) in
       let acc' =
@@ -67,7 +67,7 @@ let next_fit max_v (volumes : int array) =
 let first_fit max_v (volumes : int array) =
   let n = Array.length volumes in
   let rec aux boxes i =
-    if i = n - 1 then boxes
+    if i = n then boxes
     else
       let v = volumes.(i) in
       let rec insert_box = function
@@ -88,9 +88,9 @@ let bb_bnb v_max (volumes: int array): int =
   let n = Array.length volumes in
   let up_bound = ffd v_max volumes in
   let rec depth_search bound (boxes: box list) (depth as i: int) =
-    let v = volumes.(i) in
     let l = List.length boxes in (* Pretty sad, but need it *)
-    if i = n - 1 || l >= bound then min up_bound l else begin
+    if i >= n || l >= bound then l else begin
+      let v = volumes.(i) in
       let rec insert_box_everywhere = function
         | [] -> []
         | box :: t when does_fit box v -> (add i v box :: t) :: (List.map (List.cons box) (insert_box_everywhere t))
