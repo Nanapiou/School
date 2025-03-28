@@ -84,34 +84,6 @@ let ffd v vs =
   Array.sort (fun a b -> b - a) vs;
   first_fit v vs
 
-(* Doesn't work for now, idk why (doesn't give the good result, stuck on the ffd one) *)
-let bb_bnb' v_max (volumes: int array): int =
-  let n = Array.length volumes in
-  let upper_bound = ffd v_max volumes in (* At least, it's a good start in O(nlogn) *)
-  let rec depth_search up_bound (boxes: box array) (depth as i: int) = (* Boxes is an array cuz otherwise it would bring a O(n²) to stay with lists... *)
-    (* print_box_array boxes; print_newline (); *)
-    let len = Array.length boxes in
-    (* Stopping at the end or when we exceed the best result *)
-    if i = n - 1 || len >= up_bound then min up_bound len else begin
-      let v = volumes.(i) in 
-      let rec visit_children updated_bound j =
-        if j >= len - 1 then updated_bound
-        else begin
-          if does_fit boxes.(j) v then
-            let cp = Array.copy boxes in
-            cp.(j) <- add i v boxes.(j);
-            let b = depth_search updated_bound cp (i + 1) in
-            visit_children (min updated_bound b) (j + 1)
-          else
-            visit_children updated_bound (j + 1)  
-        end
-      in
-      let up_bound = visit_children up_bound 0 in (* Adding the object i to a box *)
-      min up_bound (depth_search up_bound (Array.append boxes [|add i v (new_box v_max)|]) (i + 1)) (* Adding it to a fresh box *)
-    end
-  in
-  depth_search upper_bound [||] 0
-
 let bb_bnb v_max (volumes: int array): int =
   let n = Array.length volumes in
   let up_bound = ffd v_max volumes in
@@ -131,11 +103,11 @@ let bb_bnb v_max (volumes: int array): int =
   depth_search up_bound [] 0
     
    
-
 let () =
   Printf.printf "%d\n%d\n%d\n%d\n"
     (next_fit v_max_big volumes_big)
     (first_fit v_max_big volumes_big)
     (ffd v_max_bnb volumes_bnb)
     (bb_bnb v_max_bnb volumes_bnb)   
+    (* (bb_bnb v_max_big volumes_big) (* Too long *) *) 
 
